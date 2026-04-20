@@ -9,33 +9,77 @@
 <body>
     <div class="container">
         <h1>Text Embedding Visualizer</h1>
-        <div class="embed-form">
-            <input 
-                type="text" 
-                id="textInput" 
-                placeholder="Enter text to embed..." 
-                class="text-input"
-            >
-            <button id="submitBtn" class="submit-btn">Embed Text</button>
-        </div>
+        
+        <div class="boxes-container">
+            <!-- Embed Box -->
+            <div class="box embed-box">
+                <h2>Text Embedding</h2>
+                <div class="embed-form">
+                    <input 
+                        type="text" 
+                        id="textInput" 
+                        placeholder="Enter text to embed..." 
+                        class="text-input"
+                    >
+                    <button id="submitBtn" class="submit-btn">Embed</button>
+                </div>
 
-        <div id="loadingSpinner" class="loading-spinner hidden"></div>
+                <div id="loadingSpinner" class="loading-spinner hidden"></div>
 
-        <div id="resultContainer" class="result-container hidden">
-            <h2>Embedding Result</h2>
-            <div class="result-info">
-                <p><strong>Input Text:</strong> <span id="inputText"></span></p>
-                <p><strong>Vector Dimension:</strong> <span id="vectorDim"></span></p>
+                <div id="resultContainer" class="result-container hidden">
+                    <div class="result-info">
+                        <p><strong>Input Text:</strong> <span id="inputText"></span></p>
+                        <p><strong>Vector Dimension:</strong> <span id="vectorDim"></span></p>
+                    </div>
+                    <div class="vector-display">
+                        <h3>Vector Values:</h3>
+                        <div id="vectorOutput" class="vector-output"></div>
+                    </div>
+                    <button id="copyBtn" class="copy-btn">Copy Vector as JSON</button>
+                </div>
+
+                <div id="errorContainer" class="error-container hidden">
+                    <p id="errorMessage"></p>
+                </div>
             </div>
-            <div class="vector-display">
-                <h3>Vector Values:</h3>
-                <div id="vectorOutput" class="vector-output"></div>
-            </div>
-            <button id="copyBtn" class="copy-btn">Copy Vector as JSON</button>
-        </div>
 
-        <div id="errorContainer" class="error-container hidden">
-            <p id="errorMessage"></p>
+            <!-- Cosine Similarity Box -->
+            <div class="box similarity-box">
+                <h2>Cosine Similarity</h2>
+                <div class="similarity-form">
+                    <input 
+                        type="text" 
+                        id="text1Input" 
+                        placeholder="Enter first text..." 
+                        class="text-input"
+                    >
+                    <input 
+                        type="text" 
+                        id="text2Input" 
+                        placeholder="Enter second text..." 
+                        class="text-input"
+                    >
+                    <button id="similarityBtn" class="submit-btn">Calculate</button>
+                </div>
+
+                <div id="similarityLoadingSpinner" class="loading-spinner hidden"></div>
+
+                <div id="similarityResultContainer" class="result-container hidden">
+                    <div class="result-info">
+                        <p><strong>Text 1:</strong> <span id="similarityText1"></span></p>
+                        <p><strong>Text 2:</strong> <span id="similarityText2"></span></p>
+                    </div>
+                    <div class="similarity-result">
+                        <h3>Result:</h3>
+                        <div id="similarityOutput" class="similarity-output"></div>
+                    </div>
+                    <button id="copySimilarityBtn" class="copy-btn">Copy Result</button>
+                </div>
+
+                <div id="similarityErrorContainer" class="error-container hidden">
+                    <p id="similarityErrorMessage"></p>
+                </div>
+            </div>
         </div>
     </div>
 

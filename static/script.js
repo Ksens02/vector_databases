@@ -1,3 +1,4 @@
+// Embed functionality
 document.getElementById('submitBtn').addEventListener('click', embedText);
 document.getElementById('textInput').addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
@@ -6,6 +7,21 @@ document.getElementById('textInput').addEventListener('keypress', (e) => {
 });
 
 document.getElementById('copyBtn').addEventListener('click', copyVector);
+
+// Cosine similarity functionality
+document.getElementById('similarityBtn').addEventListener('click', calculateSimilarity);
+document.getElementById('text1Input').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        calculateSimilarity();
+    }
+});
+document.getElementById('text2Input').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        calculateSimilarity();
+    }
+});
+
+document.getElementById('copySimilarityBtn').addEventListener('click', copySimilarity);
 
 async function embedText() {
     const textInput = document.getElementById('textInput').value.trim();
@@ -93,6 +109,96 @@ function showLoading(show) {
     } else {
         spinner.classList.add('hidden');
     }
+}
+
+async function calculateSimilarity() {
+    const text1 = document.getElementById('text1Input').value.trim();
+    const text2 = document.getElementById('text2Input').value.trim();
+
+    if (!text1 || !text2) {
+        showSimilarityError('Please enter both texts to calculate similarity.');
+        return;
+    }
+
+    showSimilarityLoading(true);
+    hideSimilarityError();
+
+    try {
+        const response = await fetch(`/cosine_similarity?text1=${encodeURIComponent(text1)}&text2=${encodeURIComponent(text2)}`);
+
+        if (!response.ok) {
+            throw new Error(`API Error: ${response.status}`);
+        }
+
+        const result = await response.json();
+
+        if (result.error) {
+            showSimilarityError(result.error);
+            showSimilarityLoading(false);
+            return;
+        }
+
+        displaySimilarityResult(text1, text2, result.cosine_similarity);
+        showSimilarityLoading(false);
+    } catch (error) {
+        console.error('Error:', error);
+        showSimilarityError(`Failed to calculate similarity: ${error.message}`);
+        showSimilarityLoading(false);
+    }
+}
+
+function displaySimilarityResult(text1, text2, similarity) {
+    document.getElementById('similarityText1').textContent = text1;
+    document.getElementById('similarityText2').textContent = text2;
+
+    const similarityOutput = document.getElementById('similarityOutput');
+    similarityOutput.innerHTML = '';
+
+    const valueDiv = document.createElement('div');
+    valueDiv.className = 'similarity-value';
+    valueDiv.innerHTML = `<span class="similarity-number">${similarity.toFixed(6)}</span>`;
+    similarityOutput.appendChild(valueDiv);
+
+    // Store result for copy functionality
+    similarityOutput.dataset.similarity = similarity;
+
+    document.getElementById('similarityResultContainer').classList.remove('hidden');
+}
+
+function copySimilarity() {
+    const similarityOutput = document.getElementById('similarityOutput');
+    const similarity = similarityOutput.dataset.similarity;
+
+    navigator.clipboard.writeText(JSON.stringify({similarity: similarity})).then(() => {
+        const copyBtn = document.getElementById('copySimilarityBtn');
+        const originalText = copyBtn.textContent;
+        copyBtn.textContent = 'Copied!';
+        setTimeout(() => {
+            copyBtn.textContent = originalText;
+        }, 2000);
+    }).catch(() => {
+        showSimilarityError('Failed to copy result to clipboard.');
+    });
+}
+
+function showSimilarityLoading(show) {
+    const spinner = document.getElementById('similarityLoadingSpinner');
+    if (show) {
+        spinner.classList.remove('hidden');
+    } else {
+        spinner.classList.add('hidden');
+    }
+}
+
+function showSimilarityError(message) {
+    const errorContainer = document.getElementById('similarityErrorContainer');
+    document.getElementById('similarityErrorMessage').textContent = message;
+    errorContainer.classList.remove('hidden');
+}
+
+function hideSimilarityError() {
+    const errorContainer = document.getElementById('similarityErrorContainer');
+    errorContainer.classList.add('hidden');
 }
 
 function showError(message) {
