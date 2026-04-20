@@ -24,7 +24,7 @@ async def cosine_similarity(text1: str, text2: str):
     norm_vector2 = np.linalg.norm(vector2)
     
     if norm_vector1 == 0 or norm_vector2 == 0:
-        return {"error": "One of the vectors is zero, cannot compute cosine similarity."}
+        return {"cosine_similarity: 0.0"}
     
     cosine_sim = dot_product / (norm_vector1 * norm_vector2)
     
